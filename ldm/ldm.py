@@ -40,8 +40,30 @@ class LatentDiffusionModel:
 
         print("Training complete. Final loss =", loss.item())
 
-    def eval(self):
+    def predict(self, past_prices):
         self.training = False  # Disable training mode
+        past_prices_tensor = torch.tensor(past_prices, dtype=torch.float)
+        with torch.no_grad(): # Context-manager that disabled gradient calculation
+            past_prices_diffused = self.forward_process(past_prices_tensor)
+            predictions = self.reverse_model(past_prices_diffused)
+        return predictions.numpy()  # Convert the predictions from PyTorch tensor to a numpy array
+
+    def eval(self, past_prices, future_prices):
+        self.training = False  # Disable training mode
+
+        # Use the predict method to get predictions
+        predictions = self.predict(past_prices)
+
+        # Convert validation data and predictions to tensors for loss calculation
+        future_prices_tensor = torch.tensor(future_prices, dtype=torch.float)
+        predictions_tensor = torch.tensor(predictions, dtype=torch.float)
+
+        # Compute the loss
+        loss = self.loss_func(predictions_tensor, future_prices_tensor)
+
+        print(f"Validation loss = {loss.item()}")
+
+        self.training = True  # Enable training mode back
 
     def train(self):
         self.training = True  # Enable training mode
