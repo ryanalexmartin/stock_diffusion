@@ -1,3 +1,6 @@
+# PSEUDO CODE FOR LATENT DIFFUSION MODEL
+# Will run experiments and implement later
+
 class StockData:
     def __init__(self, prices, volumes, dates):
         self.prices = prices  # List of prices
