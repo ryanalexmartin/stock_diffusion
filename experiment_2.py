@@ -19,7 +19,7 @@ class LDM:
 
     def forward_process(self, X, beta_t=torch.Tensor([0.5])):
         noise = torch.empty(X.shape).normal_(mean=0, std=beta_t.sqrt().item())
-        return (1 - beta_t).sqrt() * X + noise
+        return (1 - beta_t).sqrt() * X + noise # This is where the magic happens: the forward process of the LDM, which adds noise to the data
 
     def reverse_process(self, Y):
         return self.reverse_model(Y)
